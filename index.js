@@ -11,6 +11,7 @@ const adDict = require('./adDict');
 	});
 
 	const browser = await puppeteer.launch({
+		headless:false,
 		//slowMo: 500,
 		ignoreHTTPSErrors: true,
 		args: [ '--no-sandbox', '--disable-setuid-sandbox' ]
@@ -20,16 +21,25 @@ const adDict = require('./adDict');
 	await page.setUserAgent(
 		'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.87 Safari/537.36'
 	);
+
 	await page.setViewport({
 		width: 1680,
 		height: 1050
 	});
 
-	try {
+	/*try {
 		await page.goto(`https://${response.site}`, { waitUntil: 'networkidle2' });
 	} catch (error) {
 		await page.goto(`http://${response.site}`, { waitUntil: 'networkidle2' });
+	}*/
+
+	try {
+		await page.goto(response.site);
+	} catch (error) {
+		console.log(err)
 	}
+
+	await page.waitFor(5000);
 
 	const concurents = await page.evaluate(
 		({ gKeys, adDict }) => {
@@ -83,8 +93,6 @@ const adDict = require('./adDict');
 	);
 
 	console.log(concurents);
-
-	await page.screenshot({ path: 'buddy-screenshot.png' });
 
 	await browser.close();
 })();
