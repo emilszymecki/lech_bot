@@ -11,7 +11,7 @@ const adDict = require('./adDict');
 	});
 
 	const browser = await puppeteer.launch({
-		headless:false,
+		headless: true,
 		//slowMo: 500,
 		ignoreHTTPSErrors: true,
 		args: [ '--no-sandbox', '--disable-setuid-sandbox' ]
@@ -36,10 +36,10 @@ const adDict = require('./adDict');
 	try {
 		await page.goto(response.site);
 	} catch (error) {
-		console.log(err)
+		console.log(err);
 	}
 
-	await page.waitFor(5000);
+	await page.waitFor(3000);
 
 	const concurents = await page.evaluate(
 		({ gKeys, adDict }) => {
@@ -66,14 +66,22 @@ const adDict = require('./adDict');
 								].toString()
 							) || []
 					},
+					gtpLength: [ ...document.querySelectorAll('div[id^="div-gpt-ad"]') ].length,
+					caPubLength: [ ...document.querySelectorAll('ins[data-ad-client^="ca-pub-"]') ].reduce((agg, x) => {
+						if (agg[x.dataset.adClient] == undefined) {
+							agg[x.dataset.adClient] = 0;
+						}
+						agg[x.dataset.adClient] += 1;
+						return agg;
+					}, {}),
 					gTag: [ ...new Set(document.body.innerHTML.match(/ca-pub-[0-9]{16}/g)) ].map((x) =>
 						[ x, Object.keys(gKeys).find((key) => gKeys[key].includes(x)) ].toString()
 					),
 					spolecznosci: partnerChecker(adDict.spolecznosci),
 					optad: partnerChecker(adDict.optad),
 					yieldbird: partnerChecker(adDict.yieldBird),
-          ezoic: partnerChecker(adDict.ezoic),
-          themoneytizer: partnerChecker(adDict.themoneytizer),
+					ezoic: partnerChecker(adDict.ezoic),
+					themoneytizer: partnerChecker(adDict.themoneytizer),
 					yieldlove: partnerChecker(adDict.yieldlove),
 					adv_media: partnerChecker(adDict.adv_media),
 					way2grow: partnerChecker(adDict.way2grow),
