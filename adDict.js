@@ -1,7 +1,7 @@
 const adDict = {
     optad: [ 'optad', 'pbjs325474', 'pbjs325474hb', 'optad360' ],
     yieldBird: [ 'yieldbird', "_YB", "YB_" ],
-    yieldriser: ['yieldriser'],
+    yieldriser: ['yieldriser', "_YR", "YR_"],
     yieldlove: [ 'yieldlove', 'pbjsYLHH', 'YLHH', "_YL", "YL_" ],
     ezoic: [ 'ezoic', 'ez_', '_ez', 'ezslot' ],
     themoneytizer: ["tmzr","themoneytizer"],
