@@ -79,7 +79,7 @@ const adDict = require('./adDict');
 		({ gKeys, adDict }) => {
 
 			const searchPartner = (gKeys, adDict) => {
-				const allHtmlTxt = document.body.innerHTML;
+				const allHtmlTxt = document.body.parentElement.innerHTML;
 				const grabLinksHtml = allHtmlTxt.match(/(href|src|link|ref)="([^"]*)"/gi);
 				const grabBetweenSciript = allHtmlTxt.match(/<script\b[^>]*>(.*?)<\/script>/gi);
 				const scripts = grabLinksHtml
