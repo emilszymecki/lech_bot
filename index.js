@@ -1,14 +1,44 @@
 const puppeteer = require('puppeteer');
 const prompts = require('prompts');
+const parseDomain = require("parse-domain");
+const { crawl } = require('adstxt');
+const { crawlHash } = require('./crawlerHash');
 const gKeys = require('./gKeysResseler');
 const adDict = require('./adDict');
 
 (async () => {
+
 	const response = await prompts({
 		type: 'text',
 		name: 'site',
 		message: 'podaj site'
 	});
+
+	const {subdomain, domain, tld} = parseDomain(response.site);
+
+	let crawlDomain = `${domain}.${tld}`;
+
+	/*if (subdomain) {
+		crawlDomain = `${subdomain}.${domain}.${tld}`
+	  }*/
+	
+	let adsCrawl = await crawl(crawlDomain)
+
+	let adsCrawlGoogle = adsCrawl.filter(x => x.adsystemDomain.includes("google"))
+	.reduce((agg,el) => {
+		if(agg[el.accountType] == undefined){
+			agg[el.accountType] = []
+		}
+		agg[el.accountType] = new Set([...agg[el.accountType],[ "ca-"+el.sellerAccountId, Object.keys(gKeys).find((key) => gKeys[key].includes("ca-"+el.sellerAccountId)) ] ])
+		return agg
+	},{})
+	
+
+	let adsCrawlUniquePairDict = [...new Set(adsCrawl.map(x => x.adsystemDomain))].map(el => {
+		return [el,Object.keys(adDict).filter(x => adDict[x].some(y => el.includes(y)))]
+	})
+
+	let adsCrawlVendors = await crawlHash(crawlDomain)
 
 	const browser = await puppeteer.launch({
 		headless: true,
@@ -27,10 +57,11 @@ const adDict = require('./adDict');
 		height: 1050
 	});
 
+
 	/*try {
-		await page.goto(`https://${response.site}`, { waitUntil: 'networkidle2' });
+		await page.goto(`https://${crawlDomain}/`, { waitUntil: 'networkidle2' });
 	} catch (error) {
-		await page.goto(`http://${response.site}`, { waitUntil: 'networkidle2' });
+		await page.goto(https://${crawlDomain}/`, { waitUntil: 'networkidle2' });
 	}*/
 
 	try {
@@ -40,6 +71,9 @@ const adDict = require('./adDict');
 	}
 
 	await page.waitFor(3000);
+
+	
+	
 
 	const concurents = await page.evaluate(
 		({ gKeys, adDict }) => {
@@ -101,6 +135,8 @@ const adDict = require('./adDict');
 	);
 
 	console.log(concurents);
+	console.log(adsCrawlGoogle);
+	console.log([...adsCrawlVendors,...adsCrawlUniquePairDict.filter(x => x[1].length)]);
 
 	await browser.close();
 })();
