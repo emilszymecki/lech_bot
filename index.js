@@ -77,18 +77,21 @@ const adDict = require('./adDict');
 
 	const concurents = await page.evaluate(
 		({ gKeys, adDict }) => {
+
 			const searchPartner = (gKeys, adDict) => {
-				var scripts = [ ...document.querySelectorAll('script'), ...document.querySelectorAll('link') ]
-					.map((x) => x.href || x.src)
+				const allHtmlTxt = document.body.innerHTML;
+				const grabLinksHtml = allHtmlTxt.match(/(href|src|link|ref)="([^"]*)"/gi);
+				const grabBetweenSciript = allHtmlTxt.match(/<script\b[^>]*>(.*?)<\/script>/gi);
+				const scripts = grabLinksHtml
 					.filter((x) => x)
 					.map((x) => x.toLowerCase());
-				var windowKeys = Object.keys(window).map((x) => x.toLowerCase());
-				var prebidCheck = Object.keys(window)
+				const windowKeys = Object.keys(window).map((x) => x.toLowerCase());
+				const prebidCheck = Object.keys(window)
 					.filter((x) => window[x] instanceof Object)
 					.filter((x) => window[x].hasOwnProperty('requestBids'));
 
-				var partnerChecker = (dict) =>
-					dict.flatMap((x) => [ ...scripts, ...windowKeys ].filter((y) => y.includes(x))).length;
+				const partnerChecker = (dict) =>
+					dict.flatMap((x) => [ ...scripts, ...grabBetweenSciript, ...windowKeys ].filter((y) => y.includes(x))).length;
 				return {
 					prebid: {
 						prebidCheck: prebidCheck.length > 0,
