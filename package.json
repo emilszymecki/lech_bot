@@ -8,7 +8,7 @@
     "csv-parser": "^2.3.1",
     "json2csv": "^4.5.4",
     "prompts": "^2.2.1",
-    "puppeteer": "^1.20.0"
+    "puppeteer": "https://api.github.com/repos/GoogleChrome/puppeteer/tarball/5b34028e63c9532349ac525fa4c14daeada05b94"
   },
   "devDependencies": {},
   "scripts": {
