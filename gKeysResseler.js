@@ -2,7 +2,7 @@ const gKeysResseler = {
 	spolecznosci: [ 'ca-pub-2365165112249593', 'ca-pub-2386558369721555' ],
 	mediafarm: [ 'ca-pub-3653916656187385' ],
 	zpr: [ 'ca-pub-9287803764714515' ],
-	yeldbird: [
+	yieldbird: [
 		'ca-pub-0206338760093719',
 		'ca-pub-7756348393895452',
 		'ca-pub-4307100594778012',
